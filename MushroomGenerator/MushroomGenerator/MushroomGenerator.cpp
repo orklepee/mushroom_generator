@@ -17,7 +17,6 @@ class cValley
 public:
 	cValley(uint32_t x, uint32_t y, bool bGenerateFullSystem = false)
 	{
-		
 		// Set seed based on location of shrooms
 		nProcGen = (x & 0xFFFF) << 16 | (y & 0xFFFF);
 
@@ -28,7 +27,6 @@ public:
 		mushtype3 = (rndInt(0, 6) == 1);
 
 		if (!mushExists) return;
-
 	}
 
 	~cValley(){}	
@@ -87,7 +85,6 @@ public:
 		sprMush = new olc::Sprite("../../res/mushgen.png");
 		sprMush2 = new olc::Sprite("../../res/gen.png");
 		sprMush3 = new olc::Sprite("../../res/gen2.png");
-		water = new olc::Sprite("h4m/res/water.png");
 
 		return true;
 	}
