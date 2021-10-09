@@ -1,6 +1,6 @@
 /* Goal: to spawn procedurally generated mushroom sprites */
 #define OLC_PGE_APPLICATION
-#include "mushroom_generator\src\lib\olcPGEX_Sound.h"
+#include "olcPGEX_Sound.h"
 #include "olcPixelGameEngine.h"
 #include "olcPGEX_Sound.h"
 #include <cmath>
