@@ -21,7 +21,6 @@ public:
 		nProcGen = (x & 0xFFFF) << 16 | (y & 0xFFFF);
 
 		// Not all locations contain a cluster of shrooms
-		
 		mushExists = (rndInt(0, 70) == 1);
 		mushtype2 = (rndInt(0, 2) == 1);
 		mushtype3 = (rndInt(0, 6) == 1);
@@ -77,7 +76,6 @@ public:
 	olc::Sprite* sprMush = nullptr;
 	olc::Sprite* sprMush2 = nullptr;
 	olc::Sprite* sprMush3 = nullptr;
-	olc::Sprite* water = nullptr;
 
 	bool OnUserCreate() override
 	{
@@ -120,12 +118,24 @@ public:
 
 				cValley Mushroom(seed1, seed2);
 				
-				if (Mushroom.mushExists && !Mushroom.mushtype2 && !Mushroom.mushtype3)
+				if (Mushroom.mushExists)
 				{
 
 					SetPixelMode(olc::Pixel::ALPHA);
-					DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush);
+					if (Mushroom.mushtype2)
+					{
+						DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush2);
+					}
+					else if (Mushroom.mushtype3)
+					{
+						DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush3);
+					}
+					else
+					{
+						DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush);
+					}
 					SetPixelMode(olc::Pixel::NORMAL);
+
 
 					// Highlight on mushroom
 					if (mouse.x == screen_sector.x && mouse.y == screen_sector.y)
@@ -135,35 +145,6 @@ public:
 
 				}
 
-				else if (Mushroom.mushExists && Mushroom.mushtype2 && !Mushroom.mushtype3) {
-					SetPixelMode(olc::Pixel::ALPHA);
-					DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush2);
-
-					SetPixelMode(olc::Pixel::NORMAL);
-
-					// Highlight on mushroom
-					if (mouse.x == screen_sector.x && mouse.y == screen_sector.y)
-					{
-						DrawRect(screen_sector.x * 16, screen_sector.y * 16 - 8, 44, 60, olc::YELLOW);
-					}
-
-				}
-				else if (Mushroom.mushExists && Mushroom.mushtype3 && !Mushroom.mushtype2) {
-					SetPixelMode(olc::Pixel::ALPHA);
-					DrawSprite({ screen_sector.x * 16 - 8, screen_sector.y * 16 - 8 }, sprMush3);
-
-					//DrawSprite({ screen_sector.x * 16 + 8, screen_sector.y * 16 + 8 }, sprMush2);
-					SetPixelMode(olc::Pixel::NORMAL);
-					//DrawPartialSprite(screen_sector.x * 16 + 8,screen_sector.y * 16+8, sprMush, 1 * 9, 0, 44, 60);
-
-
-					// For convenience highlight hovered mushroom
-					if (mouse.x == screen_sector.x && mouse.y == screen_sector.y)
-					{
-						DrawRect(screen_sector.x * 16, screen_sector.y * 16 - 8, 44, 60, olc::YELLOW);
-					}
-
-				}
 			}
 
 		// Handle Mouse Click
@@ -190,55 +171,51 @@ public:
 			cValley Mushroom(nSelectedMushSeed1, nSelectedMushSeed2, true);
 
 			// Draw Window
-			if (Mushroom.mushExists && !Mushroom.mushtype2 && !Mushroom.mushtype3) {
-				FillRect(8, 352, 140, 120, olc::DARK_BLUE);
-				DrawRect(8, 352, 140, 120, olc::WHITE);
-				DrawString(76, 362, "Bolete", olc::WHITE);
-				DrawString(76, 378, "Common", olc::GREEN);
-				// Draw Mushroom
-				olc::vi2d vBody = { 14, 356 };
-				SetPixelMode(olc::Pixel::ALPHA);
-				DrawSprite(vBody, sprMush);
+			if (Mushroom.mushExists)
+			{
+				if (Mushroom.mushtype2)
+				{
+					FillRect(8, 352, 148, 120, olc::DARK_BLUE);
+					DrawRect(8, 352, 148, 120, olc::WHITE);
+
+					DrawString(76, 362, "Roundhead", olc::WHITE);
+					DrawString(76, 378, "Common", olc::GREEN);
+					// Draw Mushroom
+					olc::vi2d vBody = { 14, 356 };
+					SetPixelMode(olc::Pixel::ALPHA);
+					DrawSprite(vBody, sprMush2);
+				}
+				else if (Mushroom.mushtype3)
+				{
+					FillRect(8, 352, 160, 120, olc::DARK_BLUE);
+					DrawRect(8, 352, 160, 120, olc::WHITE);
+
+					DrawString(76, 362, "Chanterelle", olc::WHITE);
+					DrawString(76, 378, "Uncommon", olc::YELLOW);
+					// Draw Mushroom
+					olc::vi2d vBody = { 14, 356 };
+					SetPixelMode(olc::Pixel::ALPHA);
+					DrawSprite(vBody, sprMush3);
+				}
+				else
+				{
+					FillRect(8, 352, 140, 120, olc::DARK_BLUE);
+					DrawRect(8, 352, 140, 120, olc::WHITE);
+
+					DrawString(76, 362, "Bolete", olc::WHITE);
+					DrawString(76, 378, "Common", olc::GREEN);
+					// Draw Mushroom
+					olc::vi2d vBody = { 14, 356 };
+					SetPixelMode(olc::Pixel::ALPHA);
+					DrawSprite(vBody, sprMush);
+				}
+
 				SetPixelMode(olc::Pixel::NORMAL);
 
 			};
 
 		}
-		if (bMushSelected)
-		{
-			// Generate full mushroom valley
-			cValley Mushroom(nSelectedMushSeed1, nSelectedMushSeed2, true);
-			if (Mushroom.mushExists && Mushroom.mushtype2 && !Mushroom.mushtype3) {
-				// Draw Window
-				FillRect(8, 352, 148, 120, olc::DARK_BLUE);
-				DrawRect(8, 352, 148, 120, olc::WHITE);
-				DrawString(76, 362, "Roundhead", olc::WHITE);
-				DrawString(76, 378, "Common", olc::GREEN);
-				// Draw Mushroom
-				olc::vi2d vBody = { 14, 356 };
-				SetPixelMode(olc::Pixel::ALPHA);
-				DrawSprite(vBody, sprMush2);
-				SetPixelMode(olc::Pixel::NORMAL);
-			}
-		}
-		if (bMushSelected)
-		{
-			// Generate full mushroom valley
-			cValley Mushroom(nSelectedMushSeed1, nSelectedMushSeed2, true);
-			if (Mushroom.mushExists && !Mushroom.mushtype2 && Mushroom.mushtype3) {
-				// Draw Window
-				FillRect(8, 352, 160, 120, olc::DARK_BLUE);
-				DrawRect(8, 352, 160, 120, olc::WHITE);
-				DrawString(76, 362, "Chanterelle", olc::WHITE);
-				DrawString(76, 378, "Uncommon", olc::YELLOW);
-				// Draw Mushroom
-				olc::vi2d vBody = { 14, 356 };
-				SetPixelMode(olc::Pixel::ALPHA);
-				DrawSprite(vBody, sprMush3);
-				SetPixelMode(olc::Pixel::NORMAL);
-			}
-		}
-		
+				
 		return true;
 	}
 };
