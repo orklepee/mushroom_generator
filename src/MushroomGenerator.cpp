@@ -1,8 +1,8 @@
 /* Goal: to spawn procedurally generated mushroom sprites */
 #define OLC_PGE_APPLICATION
-#include "olcPGEX_Sound.h"
-#include "olcPixelGameEngine.h"
-#include "olcPGEX_Sound.h"
+#include "lib/olcPixelGameEngine.h"
+#include "lib/olcPGEX_Sound.h"
+#include "lib/stb_image.h"
 #include <cmath>
 #include <fstream>
 #include <Windows.h>
@@ -80,9 +80,9 @@ public:
 	bool OnUserCreate() override
 	{
 		
-		sprMush = new olc::Sprite("../../res/mushgen.png");
-		sprMush2 = new olc::Sprite("../../res/gen.png");
-		sprMush3 = new olc::Sprite("../../res/gen2.png");
+		sprMush = new olc::Sprite("../src/res/mushgen.png");
+		sprMush2 = new olc::Sprite("../src/res/gen.png");
+		sprMush3 = new olc::Sprite("../src/res/gen2.png");
 
 		return true;
 	}
