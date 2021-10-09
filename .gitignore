@@ -1,10 +1,1 @@
-**/MushroomGenerator/Debug
-**/MushroomGenerator/MushroomGenerator.sln
-**/MushroomGenerator/MushroomGenerator/Debug
-**/MushroomGenerator/MushroomGenerator/MushroomGenerator.vcxproj
-**/MushroomGenerator/MushroomGenerator/MushroomGenerator.vcxproj.filters
-**/MushroomGenerator/MushroomGenerator/MushroomGenerator.vcxproj.user
 **/.git
-**/MushroomGenerator/.vs/
-**MushroomGenerator/MushroomGenerator/cpp.hint
-**reference/
