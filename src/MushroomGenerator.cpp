@@ -80,9 +80,9 @@ public:
 	bool OnUserCreate() override
 	{
 		
-		sprMush = new olc::Sprite("../src/res/mushgen.png");
-		sprMush2 = new olc::Sprite("../src/res/gen.png");
-		sprMush3 = new olc::Sprite("../src/res/gen2.png");
+		sprMush = new olc::Sprite("../src/res/MushroomRed.png");
+		sprMush2 = new olc::Sprite("../src/res/MushroomGreen.png");
+		sprMush3 = new olc::Sprite("../src/res/MushroomYellow.png");
 
 		return true;
 	}
