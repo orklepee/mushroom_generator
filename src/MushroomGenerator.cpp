@@ -1,14 +1,17 @@
 /* Goal: to spawn procedurally generated mushroom sprites */
+
 #define OLC_PGE_APPLICATION
+#define AUDIO_LISTENER_IMPLEMENTATION
+#define AUDIO_SOURCE_IMPLEMENTATION
+#define WITH_MINIAUDIO
 #include "lib/olcPixelGameEngine.h"
-#include "lib/olcPGEX_Sound.h"
-#include "lib/stb_image.h"
 #include <cmath>
 #include <fstream>
 #include <Windows.h>
 #include <random>
-#define OLC_PGEX_SOUND_H
-#define _USE_MATH_DEFINES
+#include "lib/olcPGEX_AudioListener.h"
+#include "lib/olcPGEX_AudioSource.h"
+
 using namespace std;
 
 class cValley
@@ -76,13 +79,20 @@ public:
 	olc::Sprite* sprMush = nullptr;
 	olc::Sprite* sprMush2 = nullptr;
 	olc::Sprite* sprMush3 = nullptr;
+	olcPGEX_AudioListener AL;
+	olcPGEX_AudioSource AS_Test;
 
 	bool OnUserCreate() override
 	{
 		
+		
 		sprMush = new olc::Sprite("../src/res/MushroomRed.png");
 		sprMush2 = new olc::Sprite("../src/res/MushroomGreen.png");
 		sprMush3 = new olc::Sprite("../src/res/MushroomYellow.png");
+		
+		AL.AudioSystemInit();
+		AS_Test.AL = &AL;
+		AS_Test.LoadAudioSample(0, "C:/Repos/mushroom_generator/src/res/selectmushroom.wav");
 
 		return true;
 	}
@@ -91,6 +101,7 @@ public:
 	bool bMushSelected = false;
 	uint32_t nSelectedMushSeed1 = 0;
 	uint32_t nSelectedMushSeed2 = 0;
+
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
@@ -159,6 +170,7 @@ public:
 				bMushSelected = true;
 				nSelectedMushSeed1 = seed1;
 				nSelectedMushSeed2 = seed2;
+				AS_Test.Play(1, 1, false, false);
 			}
 			else
 				bMushSelected = false;
@@ -173,6 +185,7 @@ public:
 			// Draw Window
 			if (Mushroom.mushExists)
 			{
+				
 				if (Mushroom.mushtype2)
 				{
 					FillRect(8, 352, 148, 120, olc::DARK_BLUE);
@@ -211,7 +224,6 @@ public:
 				}
 
 				SetPixelMode(olc::Pixel::NORMAL);
-
 			};
 
 		}
@@ -225,5 +237,6 @@ int main()
 	cMushroomHeaven demo;
 	if (demo.Construct(512, 480, 2, 2, true, false))
 		demo.Start();
+	
 	return 0;
 }
