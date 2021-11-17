@@ -64,14 +64,14 @@ private:
 	}
 };
 
-class cMushroomHeaven : public olc::PixelGameEngine
+class cMushroomGenerator : public olc::PixelGameEngine
 {
 
 public:
 	
-	cMushroomHeaven()
+	cMushroomGenerator()
 	{
-		sAppName = "Mushroom Heaven";
+		sAppName = "Mushroom Generator";
 	}
 
 public:
@@ -108,6 +108,7 @@ public:
 
 	olc::vf2d vMushroomHeavenOffset = { 0,0 };
 	bool bMushSelected = false;
+	bool bGlossaryOpened = false;
 	uint32_t nSelectedMushSeed1 = 0;
 	uint32_t nSelectedMushSeed2 = 0;
 	
@@ -243,7 +244,7 @@ public:
 
 int main()
 {
-	cMushroomHeaven demo;
+	cMushroomGenerator demo;
 	if (demo.Construct(512, 480, 2, 2, true, false))
 		demo.Start();
 	
