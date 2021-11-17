@@ -18,8 +18,9 @@ class cValley
 {
 
 public:
-	cValley(uint32_t x, uint32_t y, bool bGenerateFullSystem = false)
+	cValley(uint32_t x, uint32_t y, bool bGenerateFullSystem = false, bool bClearSystem = false)
 	{
+		if (bClearSystem) return;
 		// Set seed based on location of shrooms
 		nProcGen = (x & 0xFFFF) << 16 | (y & 0xFFFF);
 
@@ -64,6 +65,15 @@ private:
 	}
 };
 
+class UserInterface
+{
+
+public: 
+
+	bool		fieldguideSelected = false;
+
+};
+
 class cMushroomGenerator : public olc::PixelGameEngine
 {
 
@@ -80,6 +90,8 @@ public:
 	olc::Sprite* sprMush = nullptr;
 	olc::Sprite* sprMush2 = nullptr;
 	olc::Sprite* sprMush3 = nullptr;
+	olc::Sprite* sprFieldGuide = nullptr;
+	olc::Decal* decFieldGuide = nullptr;
 
 	/* Audio */
 	olcPGEX_AudioListener AudioListener;
@@ -93,7 +105,8 @@ public:
 		sprMush = new olc::Sprite("../src/res/MushroomRed.png");
 		sprMush2 = new olc::Sprite("../src/res/MushroomGreen.png");
 		sprMush3 = new olc::Sprite("../src/res/MushroomYellow.png");
-		
+		sprFieldGuide = new olc::Sprite("../src/res/MagnifyingGlass.png");
+
 		/* Initializing Audio Listener and Sources */
 		AudioListener.AudioSystemInit();
 		ALSelect.AL = &AudioListener;
@@ -108,17 +121,25 @@ public:
 
 	olc::vf2d vMushroomHeavenOffset = { 0,0 };
 	bool bMushSelected = false;
-	bool bGlossaryOpened = false;
+	bool bFieldGuideSelected = false;
 	uint32_t nSelectedMushSeed1 = 0;
 	uint32_t nSelectedMushSeed2 = 0;
-	
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		
 		if (fElapsedTime <= 0.0001f) return true;
 		Clear(olc::DARK_GREEN);
+
+		olc::vi2d vBody2 = { 464, 428 };
 		
+		decFieldGuide = new olc::Decal(sprFieldGuide);
+		
+		if (!bFieldGuideSelected)
+		{
+			DrawDecal(vBody2, decFieldGuide, { (0.7F), (0.7F) });
+		}
+
 		if (GetKey(olc::W).bHeld) vMushroomHeavenOffset.y -= 50.0f * fElapsedTime;
 		if (GetKey(olc::S).bHeld) vMushroomHeavenOffset.y += 50.0f * fElapsedTime;
 		if (GetKey(olc::A).bHeld) vMushroomHeavenOffset.x -= 50.0f * fElapsedTime;
@@ -137,7 +158,13 @@ public:
 				uint32_t seed1 = (uint32_t)vMushroomHeavenOffset.x + (uint32_t)screen_sector.x;
 				uint32_t seed2 = (uint32_t)vMushroomHeavenOffset.y + (uint32_t)screen_sector.y;
 
-				cValley Mushroom(seed1, seed2);
+				if (bFieldGuideSelected) {
+					// Prevents sprites being unnecessarily drawn to screen while FieldGuide window is open
+					cValley Mushroom(seed1, seed2, false, true);
+				}
+				else {
+					cValley Mushroom(seed1, seed2);
+				
 				
 				if (Mushroom.mushExists)
 				{
@@ -165,7 +192,7 @@ public:
 					}
 
 				}
-
+				}
 			}
 
 		// Handle Mouse Click
@@ -178,12 +205,23 @@ public:
 			if (Mushroom.mushExists)
 			{
 				bMushSelected = true;
+				bFieldGuideSelected = false;
 				nSelectedMushSeed1 = seed1;
 				nSelectedMushSeed2 = seed2;
 				ALSelect.Play(1, 1, false, false);
 			}
-			else
+			if (mouse.x * 16 >= vBody2.x && mouse.y * 16 >= vBody2.y)
+			{
+				bFieldGuideSelected = true;
 				bMushSelected = false;
+				
+				ALSelect.Play(1,1,false,false);
+			}
+			if (!Mushroom.mushExists &&  !(mouse.x * 16 >= vBody2.x && mouse.y * 16 >= vBody2.y))
+			{
+				bMushSelected = false;
+				bFieldGuideSelected = false;
+			}
 		}
 
 		// Draw info window
@@ -237,7 +275,18 @@ public:
 			};
 
 		}
-				
+		// Draw FieldGuide window
+		else if (bFieldGuideSelected)
+		{
+			olc::vi2d vBodyFieldGuide = { 32, 448 };
+			FillRect(vBodyFieldGuide.x , vBodyFieldGuide.x / 2, vBodyFieldGuide.y, vBodyFieldGuide.y, olc::DARK_BLUE);
+			DrawRect(vBodyFieldGuide.x, vBodyFieldGuide.x / 2, vBodyFieldGuide.y, vBodyFieldGuide.y, olc::WHITE);
+
+			DrawString(vBodyFieldGuide.y / 2 - 48, vBodyFieldGuide.x, "Field Guide", olc::WHITE, 2);
+			DrawString(vBodyFieldGuide.y / 2 - 20, vBodyFieldGuide.y - 20, "click to exit", olc::WHITE, 1);
+
+			// Bring up array of available mushrooms - write for each mushroom in array, display them
+		}
 		return true;
 	}
 };
@@ -245,7 +294,7 @@ public:
 int main()
 {
 	cMushroomGenerator demo;
-	if (demo.Construct(512, 480, 2, 2, true, false))
+	if (demo.Construct(512, 480, 2, 2, false, false))
 		demo.Start();
 	
 	return 0;
