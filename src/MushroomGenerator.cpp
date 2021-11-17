@@ -76,23 +76,32 @@ public:
 
 public:
 	
+	/* Sprites */
 	olc::Sprite* sprMush = nullptr;
 	olc::Sprite* sprMush2 = nullptr;
 	olc::Sprite* sprMush3 = nullptr;
-	olcPGEX_AudioListener AL;
-	olcPGEX_AudioSource AS_Test;
+
+	/* Audio */
+	olcPGEX_AudioListener AudioListener;
+	olcPGEX_AudioSource ALSelect;
+	olcPGEX_AudioSource ALOverworld;
 
 	bool OnUserCreate() override
 	{
 		
-		
+		/* Sprites */
 		sprMush = new olc::Sprite("../src/res/MushroomRed.png");
 		sprMush2 = new olc::Sprite("../src/res/MushroomGreen.png");
 		sprMush3 = new olc::Sprite("../src/res/MushroomYellow.png");
 		
-		AL.AudioSystemInit();
-		AS_Test.AL = &AL;
-		AS_Test.LoadAudioSample(0, "C:/Repos/mushroom_generator/src/res/selectmushroom.wav");
+		/* Initializing Audio Listener and Sources */
+		AudioListener.AudioSystemInit();
+		ALSelect.AL = &AudioListener;
+		ALSelect.LoadAudioSample(0, "C:/Repos/mushroom_generator/src/res/selectmushroom.wav");
+		ALOverworld.AL = &AudioListener;
+		ALOverworld.LoadAudioSample(1, "C:/Repos/mushroom_generator/src/res/overworld.wav");
+
+		ALOverworld.Play(1.5,.5,true,false);
 
 		return true;
 	}
@@ -101,7 +110,7 @@ public:
 	bool bMushSelected = false;
 	uint32_t nSelectedMushSeed1 = 0;
 	uint32_t nSelectedMushSeed2 = 0;
-
+	
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
@@ -170,7 +179,7 @@ public:
 				bMushSelected = true;
 				nSelectedMushSeed1 = seed1;
 				nSelectedMushSeed2 = seed2;
-				AS_Test.Play(1, 1, false, false);
+				ALSelect.Play(1, 1, false, false);
 			}
 			else
 				bMushSelected = false;
