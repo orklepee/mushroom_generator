@@ -18,8 +18,9 @@ class cValley
 {
 
 public:
-	cValley(uint32_t x, uint32_t y, bool bGenerateFullSystem = false)
+	cValley(uint32_t x, uint32_t y, bool bGenerateFullSystem = false, bool bClearSystem = false)
 	{
+		if (bClearSystem) return;
 		// Set seed based on location of shrooms
 		nProcGen = (x & 0xFFFF) << 16 | (y & 0xFFFF);
 
@@ -80,6 +81,7 @@ public:
 	olc::Sprite* sprMush = nullptr;
 	olc::Sprite* sprMush2 = nullptr;
 	olc::Sprite* sprMush3 = nullptr;
+	olc::Sprite* sprGlossary = nullptr;
 
 	/* Audio */
 	olcPGEX_AudioListener AudioListener;
@@ -93,7 +95,8 @@ public:
 		sprMush = new olc::Sprite("../src/res/MushroomRed.png");
 		sprMush2 = new olc::Sprite("../src/res/MushroomGreen.png");
 		sprMush3 = new olc::Sprite("../src/res/MushroomYellow.png");
-		
+		sprGlossary = new olc::Sprite("../src/res/mushgen2.png");
+
 		/* Initializing Audio Listener and Sources */
 		AudioListener.AudioSystemInit();
 		ALSelect.AL = &AudioListener;
@@ -108,16 +111,23 @@ public:
 
 	olc::vf2d vMushroomHeavenOffset = { 0,0 };
 	bool bMushSelected = false;
-	bool bGlossaryOpened = false;
+	bool bGlossarySelected = false;
 	uint32_t nSelectedMushSeed1 = 0;
 	uint32_t nSelectedMushSeed2 = 0;
-	
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		
 		if (fElapsedTime <= 0.0001f) return true;
 		Clear(olc::DARK_GREEN);
+
+		//SetPixelMode(olc::Pixel::ALPHA);
+		//DrawSprite({ 448, 412 }, sprGlossary);
+
+		olc::vi2d vBody2 = { 448, 412 };
+		SetPixelMode(olc::Pixel::ALPHA);
+		DrawSprite(vBody2, sprGlossary);
+		SetPixelMode(olc::Pixel::NORMAL);
 		
 		if (GetKey(olc::W).bHeld) vMushroomHeavenOffset.y -= 50.0f * fElapsedTime;
 		if (GetKey(olc::S).bHeld) vMushroomHeavenOffset.y += 50.0f * fElapsedTime;
@@ -137,7 +147,13 @@ public:
 				uint32_t seed1 = (uint32_t)vMushroomHeavenOffset.x + (uint32_t)screen_sector.x;
 				uint32_t seed2 = (uint32_t)vMushroomHeavenOffset.y + (uint32_t)screen_sector.y;
 
-				cValley Mushroom(seed1, seed2);
+				if (bGlossarySelected) {
+					// Prevents sprites being unnecessarily drawn to screen while glossary window is open
+					cValley Mushroom(seed1, seed2, false, true);
+				}
+				else {
+					cValley Mushroom(seed1, seed2);
+				
 				
 				if (Mushroom.mushExists)
 				{
@@ -165,7 +181,7 @@ public:
 					}
 
 				}
-
+				}
 			}
 
 		// Handle Mouse Click
@@ -182,8 +198,13 @@ public:
 				nSelectedMushSeed2 = seed2;
 				ALSelect.Play(1, 1, false, false);
 			}
+			//else if (/* Some kind of condition that selects the icon */)
+			//{
+			//	bGlossarySelected = true;
+			//}
 			else
 				bMushSelected = false;
+				bGlossarySelected = true;
 		}
 
 		// Draw info window
@@ -237,7 +258,13 @@ public:
 			};
 
 		}
-				
+
+		// Draw glossary window
+		if (bGlossarySelected)
+		{
+			FillRect(16,8, 480, 448, olc::DARK_BLUE);
+			DrawRect(16, 8, 480, 448, olc::WHITE);
+		}
 		return true;
 	}
 };
@@ -245,7 +272,7 @@ public:
 int main()
 {
 	cMushroomGenerator demo;
-	if (demo.Construct(512, 480, 2, 2, true, false))
+	if (demo.Construct(512, 480, 2, 2, false, false))
 		demo.Start();
 	
 	return 0;
