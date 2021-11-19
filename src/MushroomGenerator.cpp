@@ -294,7 +294,7 @@ public:
 int main()
 {
 	cMushroomGenerator demo;
-	if (demo.Construct(512, 480, 2, 2, false, false))
+	if (demo.Construct(512, 480, 2, 2, true, false))
 		demo.Start();
 	
 	return 0;
