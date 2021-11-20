@@ -26,6 +26,7 @@ struct MushBio
 	{
 	}
 
+	bool operator< (const MushBio& spec) const { return Species < spec.Species; }
 };
 
 /* Mushroom class handles everything relating to a single instance of a mushroom:
@@ -40,5 +41,5 @@ private:
 	std::set<MushBio> MushroomBiography;
 
 public:
-	MushBio GetMushSpecies
+	MushBio GetMushSpecies(MushSpecies)
 };
