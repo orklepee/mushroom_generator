@@ -41,5 +41,5 @@ private:
 	std::set<MushBio> MushroomBiography;
 
 public:
-	MushBio GetMushSpecies(MushSpecies)
+	MushBio GetMushSpecies(MushSpecies);
 };

@@ -2,7 +2,8 @@
 
 MushBio Mushroom::GetMushSpecies(MushSpecies species)
 {
-	return MushroomBiography.begin();
+	//return MushroomBiography.begin();
+	return MushSpecies::Bolete;
 }
 
 // In the main MushroomGenerator.cpp file you would create a mushroom like so:
